@@ -36,7 +36,7 @@ public class WebSocketConfig extends AbstractWebSocketMessageBrokerConfigurer {
     public void configureMessageBroker(MessageBrokerRegistry config) {
         if (ArrayUtils.contains(environment.getActiveProfiles(), "distributed-command-bus")) {
             config.enableStompBrokerRelay("/topic")
-                  .setRelayHost("rabbitmq");
+                  .setRelayHost("localhost");
         } else {
             config.enableSimpleBroker("/topic");
         }

@@ -18,5 +18,11 @@ services:
     environment:
       - MYSQL_ROOT_PASSWORD=root
       - MYSQL_DATABASE=axonbank
+    ports:
+            - "3306:3306"
   rabbitmq:
     build: docker/rabbitmq/
+    ports:
+        - "15672:15672"
+        - "5672:5672"
+        - "61613:61613"

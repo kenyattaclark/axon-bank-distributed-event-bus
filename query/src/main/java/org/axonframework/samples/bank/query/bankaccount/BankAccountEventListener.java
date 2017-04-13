@@ -16,6 +16,7 @@
 
 package org.axonframework.samples.bank.query.bankaccount;
 
+import org.axonframework.config.ProcessingGroup;
 import org.axonframework.eventhandling.EventHandler;
 import org.axonframework.samples.bank.api.bankaccount.BankAccountCreatedEvent;
 import org.axonframework.samples.bank.api.bankaccount.MoneyAddedEvent;
@@ -24,6 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Component;
 
+@ProcessingGroup("bank")
 @Component
 public class BankAccountEventListener {
 

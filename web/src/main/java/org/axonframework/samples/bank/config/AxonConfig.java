@@ -16,10 +16,19 @@
 
 package org.axonframework.samples.bank.config;
 
+import com.rabbitmq.client.Channel;
+import org.axonframework.amqp.eventhandling.DefaultAMQPMessageConverter;
+import org.axonframework.amqp.eventhandling.spring.SpringAMQPMessageSource;
+import org.axonframework.config.Configurer;
 import org.axonframework.eventhandling.EventBus;
+import org.axonframework.eventhandling.saga.repository.SagaStore;
 import org.axonframework.samples.bank.command.BankAccount;
 import org.axonframework.samples.bank.command.BankAccountCommandHandler;
+import org.axonframework.samples.bank.command.ExpenseManagementSaga;
+import org.axonframework.serialization.Serializer;
 import org.axonframework.spring.config.AxonConfiguration;
+import org.springframework.amqp.core.Message;
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -35,5 +44,25 @@ public class AxonConfig {
     @Bean
     public BankAccountCommandHandler bankAccountCommandHandler() {
         return new BankAccountCommandHandler(axonConfiguration.repository(BankAccount.class), eventBus);
+    }
+
+    @Bean
+    public SpringAMQPMessageSource bankSource(Serializer serializer) {
+        return new SpringAMQPMessageSource(new DefaultAMQPMessageConverter(serializer)) {
+
+            @RabbitListener(queues = {"test", "saga"})
+            @Override
+            public void onMessage(Message message, Channel channel) throws Exception {
+                super.onMessage(message, channel);
+            }
+        };
+    }
+
+    @Autowired
+    public void registerSaga(Configurer configurer, SagaStore sagaStore, Serializer serializer) {
+        SagaConfiguration<?> sagaConfiguration =
+                SagaConfiguration.subscribingSagaManager(ExpenseManagementSaga.class, bankSource(serializer));
+//        sagaConfiguration.configureSagaStore(sagaStore);
+        configurer.registerModule(sagaConfiguration);
     }
 }

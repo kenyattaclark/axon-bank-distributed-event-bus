@@ -88,4 +88,9 @@ public class BankAccountCommandHandler {
         Aggregate<BankAccount> bankAccountAggregate = repository.load(command.getBankAccountId());
         bankAccountAggregate.execute(bankAccount -> bankAccount.returnMoney(command.getAmount()));
     }
+
+//    @CommandHandler
+//    public void handle(SaveTimeInSystemCommand command) {
+//
+//    }
 }
